@@ -1,0 +1,4 @@
+configmap:
+  REDIS_HOST: "redis"
+  CATALOGUE_HOST: "catalogue"
+
