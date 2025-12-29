@@ -1,15 +1,22 @@
 @Library('jenkins-shared-library') _
 
+// Parameters must be declared before any pipeline logic executes
+properties([
+  parameters([
+    string(name: 'appVersion',   description: 'Enter Application version'),
+    choice(name: 'deploy_to', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
+  ])
+])
+
+// Build configMap from params (with safe defaults)
 def configMap = [
-    project: "roboshop",
-    component: "cart"
+  project    : "roboshop",
+  component  : "cart",
+  deploy_to: (params.deploy_to       ?: 'dev'),
+  appVersion : (params.appVersion)
 ]
 
 echo "Going to execute Jenkins shared library"
-// if branch is not equal to main, then run CI pipeline
-if ( ! env.BRANCH_NAME.equalsIgnoreCase('main') ){
-    nodeJSEKSPipeline(configMap)
-}
-else {
-    echo "Please follow the CR process"
-}
+echo "ConfigMap: ${configMap}"
+
+EKSDeploy(configMap)
